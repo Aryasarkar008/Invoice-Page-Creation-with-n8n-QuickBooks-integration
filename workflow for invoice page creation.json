@@ -1,0 +1,2091 @@
+{
+  "name": "workflow for invoice page creation",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Google Sheets: Create Sheet').item.json.spreadsheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Google Sheets: Create Sheet').item.json.sheets[0].properties.sheetId }}",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Customer Account Number",
+              "displayName": "Customer Account Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Invoice Date",
+              "displayName": "Invoice Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Due Date",
+              "displayName": "Due Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PO Number",
+              "displayName": "PO Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Item Column Title",
+              "displayName": "Item Column Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Quantity Column",
+              "displayName": "Quantity Column",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Item Name",
+              "displayName": "Item Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Unit Price",
+              "displayName": "Unit Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Decription",
+              "displayName": "Decription",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -336,
+        768
+      ],
+      "id": "0bebe5b1-6f67-4d84-977c-d8aed9136208",
+      "name": "Google Sheets2",
+      "alwaysOutputData": false,
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dafm31Y0W1apzu9B",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "89af4fa2-04e9-4e86-90cd-805437cb96c4",
+              "name": "id",
+              "value": "={{ $('Google Sheets: Create Sheet').item.json.spreadsheetId }}",
+              "type": "string"
+            },
+            {
+              "id": "6625391b-df04-4775-976d-baeb91ff083c",
+              "name": "name",
+              "value": "={{ $('Google Sheets: Create Sheet').item.json.properties.title }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -144,
+        768
+      ],
+      "id": "38489a53-be9f-4d80-90b9-76b17dd6603d",
+      "name": "Set: Spreadsheet  (ID & Name)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const newItems = [];\n\nconst binary = items[0].binary;\n\nfor (const key in binary) {\n  newItems.push({\n    json: {},\n    binary: {\n      [key]: binary[key]\n    }\n  });\n}\n\nreturn newItems;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5872,
+        832
+      ],
+      "id": "626d2b21-e8ce-4aa5-86ec-f6f31f108338",
+      "name": "Split Binary Attachments"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -5664,
+        832
+      ],
+      "id": "aa843c93-7762-4d5c-970b-f1ac6de4a974",
+      "name": "Loop: Process Each Attachment",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -3760,
+        1040
+      ],
+      "id": "5d0d5341-6f1d-446f-8e8d-d8ae18ecb68e",
+      "name": "Wait1",
+      "webhookId": "fb2df726-1ef6-469a-97ca-0735e2bbd051"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "months",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -4496,
+        848
+      ],
+      "id": "850f994b-bc5a-4961-ad48-18465a02947a",
+      "name": "Split Each Month"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "44bad27c-2c1d-46c7-9c60-d3a32b494a14",
+              "name": "Employee Name",
+              "value": "={{$('AI Agent').item.json.output.parseJson()['Employee Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d5a52d08-8226-45bd-904a-82e03d1d2dba",
+              "name": "Month",
+              "value": "={{ $json.month }}\n",
+              "type": "string"
+            },
+            {
+              "id": "d0210ffe-0b19-4d18-9209-06257c9ab373",
+              "name": "Total Hours",
+              "value": "={{ $json['Total Hours'] }}\n",
+              "type": "string"
+            },
+            {
+              "id": "b5a64a37-8d6a-4040-bd07-b51fd15ba95b",
+              "name": "Week Starting Date",
+              "value": "={{ $json['Week Starting Date'] }}",
+              "type": "string"
+            },
+            {
+              "id": "c2ad96d6-deea-4869-995a-f5c580dbff76",
+              "name": "Week Ending Date",
+              "value": "={{ $json['Week Ending Date'] }}",
+              "type": "string"
+            },
+            {
+              "id": "00c459ba-b762-4337-8258-63d6fe56e370",
+              "name": "Year",
+              "value": "={{ $json.year }}",
+              "type": "string"
+            },
+            {
+              "id": "79c4a9c7-c6b6-49bb-a0da-764b64ab11c7",
+              "name": "Client Name",
+              "value": "={{ $('AI Agent').item.json.output.parseJson().Client}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3520,
+        816
+      ],
+      "id": "7f09b28c-c8f0-4f37-9351-831f4e5b3bcc",
+      "name": "Map Timesheet Fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Decription",
+              "lookupValue": "=Week ending date {{ $('Map Timesheet Fields').all()[0].json['Week Ending Date'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -816,
+        512
+      ],
+      "id": "6c69c996-ad7a-466c-91dc-18b8131921cc",
+      "name": "Check for Duplicate Entry",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dafm31Y0W1apzu9B",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b04fdc75-0d03-41b8-be76-7ed057d2087e",
+              "leftValue": "={{ $json.Decription }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -464,
+        272
+      ],
+      "id": "4a078bfd-ec1b-421c-8833-3de3bcce2ee8",
+      "name": "Skip If Duplicate Found"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ec172078-ec0e-4c75-b7aa-945b0a6259d8",
+              "name": "Sheet Name",
+              "value": "={{$('Map Timesheet Fields').item.json['Employee Name'].trim().replace(/\\s/g, \"\") + \"_\" + $('Map Timesheet Fields').item.json.Month.trim().replace(/\\s/g, \"\") + \"_\" + new Date().getFullYear() }}\n\n\n",
+              "type": "string"
+            },
+            {
+              "id": "525e1d85-c316-4cee-90b8-21859c33633d",
+              "name": "last date of current month",
+              "value": "={{ \n  (() => {\n    const monthMap = {\n      January: 0, February: 1, March: 2, April: 3, May: 4, June: 5,\n      July: 6, August: 7, September: 8, October: 9, November: 10, December: 11,\n    };\n    const rawMonth = $json['month'] || $json['Month'] || '';\n    const monthStr = rawMonth.toString().trim().replace(/\\s+/g, ' ');\n    const rawYear = $json['year'] || $json['Year'] || '';\n    const year = Number(rawYear);\n    const monthIndex = monthMap[monthStr];\n\n    if (monthIndex === undefined || isNaN(year)) {\n      return `Invalid input: month='${monthStr}', year='${rawYear}'`;\n    }\n\n    // Use Date.UTC to calculate last day reliably\n    const lastDay = new Date(Date.UTC(year, monthIndex + 1, 0));\n    return lastDay.toISOString().split('T')[0];\n  })() \n}}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3168,
+        816
+      ],
+      "id": "55d46b7d-fafd-49d4-96c6-c36bcc5a100f",
+      "name": "Create Sheet Name + Invoice Date"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "54fd631e-bb84-4d4d-a59f-325325d99a5a",
+              "leftValue": "={{ $json['Week Starting Date'].split(\"/\")[0] }}\n",
+              "rightValue": "={{ $('Prepare Month array').item.json['Target month1'] }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3968,
+        832
+      ],
+      "id": "e492eca2-baab-484d-bbaa-d9aa6e112205",
+      "name": " If: First Time This Month?"
+    },
+    {
+      "parameters": {
+        "resource": "spreadsheet",
+        "title": "={{ $('Create Sheet Name + Invoice Date').all()[0].json['Sheet Name'] }}",
+        "sheetsUi": {
+          "sheetValues": [
+            {
+              "title": "=Sheet1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -896,
+        768
+      ],
+      "id": "04943d64-f822-42bb-adb9-94d353e7a1ee",
+      "name": "Google Sheets: Create Sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dafm31Y0W1apzu9B",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.spreadsheetId }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Check if Year Folder Exists').item.json.id || $('Create Current Year Folder').item.json.id }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -736,
+        768
+      ],
+      "id": "da626ba1-bcc3-43e2-ace2-f68ef5f459c5",
+      "name": "Move Sheet to Invoice Folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hnjhuREaS2N0xPSJ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"Customer Account Number\": \"\",\n   \"Invoice Date\": \"\",\n  \"Due Date\": \"\",\n   \"PO Number\": \"\",\n  \"Item Column Title\":\"\",\n  \"Quantity Column\":\"\",\n  \"Item Name\":\"\",\n  \"Quantity\" :\"\",\n  \"Unit Price\":\"\",\n  \"Decription\" :\"\"\n  \n  }\n",
+        "options": {
+          "dotNotation": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -544,
+        768
+      ],
+      "id": "b6fc1812-a8fc-4429-a73b-91b6d82a987c",
+      "name": "Prepare Default Invoice Row",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "768e3b62-b460-4845-abce-3e2058826a7a",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "=\n",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1120,
+        688
+      ],
+      "id": "d27896f3-e43d-4d8f-b3df-730813dcd6be",
+      "name": "If- File is Exist",
+      "executeOnce": false,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aa59ebe3-e51a-45ae-a3e0-2dfee0fba40c",
+              "leftValue": "={{ $json['Total Hours'] }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "0a8ff7ab-4a71-4e83-b5e1-a99516b63846",
+              "leftValue": "={{ $json.month }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4256,
+        848
+      ],
+      "id": "84ae8179-4af9-4c6f-a269-965c74968187",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "01-ClientInvoices",
+        "returnAll": true,
+        "filter": {
+          "driveId": {
+            "mode": "list",
+            "value": "My Drive"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2768,
+        816
+      ],
+      "id": "4608b6bc-f95e-46dc-abe8-f1f85985b2e0",
+      "name": "Search: Client Invoices Folder",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hnjhuREaS2N0xPSJ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $('Map Timesheet Fields').item.json['Employee Name'] }}",
+        "returnAll": true,
+        "filter": {
+          "driveId": {
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          },
+          "whatToSearch": "folders"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2544,
+        816
+      ],
+      "id": "4bdddfde-3833-4341-b698-cd1421ebd527",
+      "name": "Search: Employee Name Folder",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hnjhuREaS2N0xPSJ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e4d2d3f6-4fff-473b-9dd6-27bb19e8ce67",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2352,
+        800
+      ],
+      "id": "1ff8216f-2250-4b4d-b986-20075dde68ec",
+      "name": "Check Employee Name Folder"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=",
+        "returnAll": true,
+        "filter": {
+          "driveId": {
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          },
+          "whatToSearch": "folders"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2160,
+        608
+      ],
+      "id": "908dcbb2-afb1-482a-b060-4d2decf51cf1",
+      "name": "Search: Inside folders in Employee Name Folder",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hnjhuREaS2N0xPSJ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $('Map Timesheet Fields').item.json.Year }}",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Search: Inside folders in Employee Name Folder').first().json.id }}",
+            "mode": "id"
+          },
+          "whatToSearch": "folders"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1824,
+        608
+      ],
+      "id": "afda372b-be08-4014-b12a-0ab32e19228a",
+      "name": "Search: Year Folder ",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hnjhuREaS2N0xPSJ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $('Get Customer Info From PO Sheet').item.json['Folder Name'] }}",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1984,
+        608
+      ],
+      "id": "c00b2236-bf9b-40e2-b765-871907066cf8",
+      "name": "Search: folder name",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hnjhuREaS2N0xPSJ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "daebe4a7-edcf-4902-a5d7-6c6b4ad995c8",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1616,
+        768
+      ],
+      "id": "1e8fbbf1-29ae-4055-8096-8572286fb689",
+      "name": "Check if Year Folder Exists"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Map Timesheet Fields').item.json.Year }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Search: folder name').item.json.id  }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1456,
+        960
+      ],
+      "id": "dec30af9-afb2-4a44-ac8e-03336c902461",
+      "name": "Create Current Year Folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hnjhuREaS2N0xPSJ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Map Timesheet Fields').item.json['Employee Name'] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Search: Client Invoices Folder').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2160,
+        944
+      ],
+      "id": "54c52143-7c12-49c9-82f9-1950579eb73a",
+      "name": "Create Employee Name Folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hnjhuREaS2N0xPSJ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $('Create Sheet Name + Invoice Date').all()[0].json['Sheet Name']}}",
+        "returnAll": true,
+        "filter": {
+          "driveId": {
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1296,
+        752
+      ],
+      "id": "568a7bb2-7a56-4c25-9120-07ca00ed80ee",
+      "name": "Google Drive",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hnjhuREaS2N0xPSJ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "11iUiyjpjaz6pNtSSncU3hwPvBzI5y2Gp8Tvuamjkd98",
+          "mode": "list",
+          "cachedResultName": "Customer POs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11iUiyjpjaz6pNtSSncU3hwPvBzI5y2Gp8Tvuamjkd98/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11iUiyjpjaz6pNtSSncU3hwPvBzI5y2Gp8Tvuamjkd98/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $('Gmail Trigger').item.json.from.value[0].address }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -2960,
+        816
+      ],
+      "id": "eac14baa-16e2-4229-a563-6096885c7231",
+      "name": "Get Customer Info From PO Sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dafm31Y0W1apzu9B",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Get Customer Info From PO Sheet').item.json['Folder Name']}}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1968,
+        944
+      ],
+      "id": "491bc6da-115f-401d-abe2-e5c15698f32f",
+      "name": "Create  Folder Name",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hnjhuREaS2N0xPSJ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Map Timesheet Fields').item.json.Year }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1776,
+        944
+      ],
+      "id": "6f5737a7-6ab8-404b-bd8e-98f6d3d30549",
+      "name": "Create: Year Folder",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hnjhuREaS2N0xPSJ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6a337e56-3cd4-46c4-aeb9-a9273bd34a3e",
+              "name": "months",
+              "value": "={{ JSON.stringify([ $json.output.parseJson().month1, $json.output.parseJson().month2 ]) }}",
+              "type": "array"
+            },
+            {
+              "id": "3d2cb537-6a4c-4ed1-b8cc-8b1d02af794d",
+              "name": "Target month1",
+              "value": "={{ $json.output.parseJson().month1['Week Starting Date'].split(\"/\")[0] }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4736,
+        848
+      ],
+      "id": "39db7191-b872-41bf-80d0-687fcc4e7d7b",
+      "name": "Prepare Month array"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "=has:attachment (subject:\"Casper timesheet\" OR subject:\"Timesheets\")\n\n",
+          "readStatus": "read"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -6096,
+        832
+      ],
+      "id": "fcb665f5-a86e-4671-b376-1d9939e9d051",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "0gxsSXUtKn2ECvit",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -5424,
+        848
+      ],
+      "id": "40c33a2f-8900-4d9f-8215-790ac8ec93bc",
+      "name": "Wait",
+      "webhookId": "7bbe4025-cd13-4ac9-8c02-4eeb10699ab2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://universal-file-to-text-extractor.vercel.app/extract",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "mode",
+              "value": "single"
+            },
+            {
+              "name": "output_type",
+              "value": "text"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "files",
+              "inputDataFieldName": "={{ Object.keys($binary)[0] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -5264,
+        848
+      ],
+      "id": "88334e19-16ac-420b-bdd4-ca78873b6086",
+      "name": "Extract Text "
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e01b225a-7c1a-499d-9fbd-ad7e61de8af1",
+              "leftValue": "={{ parseInt($json[\"Invoice Date\"].split(\"-\")[0].trim()) }}\n",
+              "rightValue": "=1",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -608,
+        512
+      ],
+      "id": "2041b3fa-261a-4fc4-917e-648c8cda3ff0",
+      "name": "Skip January First Time"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('If- File is Exist').item.json.id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -272,
+        496
+      ],
+      "id": "65e79106-867c-4088-a7b0-010134df4035",
+      "name": "Delete Exiting Row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dafm31Y0W1apzu9B",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extract data **only** from the BILLABLE HOURS or DAYS section.\n\nIgnore:\n- “Period Ending”, signature dates, headers, or footers\n- NON-BILLABLE, HOLIDAY, LEAVE, or any other unrelated sections\n\n- extract billable hours data and working hours **month by month**, with the following fields:\n\nFor each month found in the BILLABLE HOURS row, return:\n- \"month\": Full month name (e.g., July)\n- \"year\": 4-digit year\n- \"Week Starting Date\": First date in that month from the BILLABLE HOURS row (even if hours = 0), format: MM/DD/YYYY\n- \"Week Ending Date\": Last date in that month from the BILLABLE HOURS row (even if hours = 0), format: MM/DD/YYYY\n- \"Total Hours\": Sum of billable hours for that month (use only the “Total Billable hours/days” row)\n\nSpecial Handling for Split Weeks:\n- If a week includes dates across two months (e.g., Jun-30 to Jul-6), split them by month.\n- Each month should contain **only its own dates and billable hours**.\n\n Do not skip a month just because hours are 0 — still include the correct week start/end dates and `\"Total Hours\": 0`.\n\n Do not guess or assume any dates not clearly listed in the BILLABLE HOURS section.\n\n---\n\nExample:\nIf the BILLABLE HOURS row shows:  \n`Jun-30 Jul-1 Jul-2 Jul-3 Jul-4 Jul-5 Jul-6`  \nAnd only Jun-30 has hours:\n\nReturn:\n\n{\n  \"Employee Name\": \"Ravi Katta\",\n \"Manager Name\": \"\",\n \"Client\": \"\",\n  \"month1\": {\n    \"month\": \"June\",\n    \"year\": 2025,\n    \"Week Starting Date\": \"06/30/2025\",\n    \"Week Ending Date\": \"06/30/2025\",\n    \"Total Hours\": \n  },\n  \"month2\": {\n    \"month\": \"July\",\n    \"year\": 2025,\n    \"Week Starting Date\": \"07/01/2025\",\n    \"Week Ending Date\": \"07/06/2025\",\n    \"Total Hours\": \n  }\n}\n\nRemember this most importantly, Return only valid JSON. Do not wrap the JSON in markdown code fences (no ```json) or no use of ``` in the output.\n\n{{ $json.data[0].text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -5056,
+        1008
+      ],
+      "id": "f06985f9-72c8-4f05-ba3d-84681112965c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": "={{ $('Get row(s) in sheet').item.json[\"Customer Account Number\"] }}",
+        "filters": {
+          "query": "=WHERE DisplayName = '{{ $json[\"Customer Name\"] }}'"
+        }
+      },
+      "name": "QuickBooks Find Customer",
+      "type": "n8n-nodes-base.quickbooks",
+      "typeVersion": 1,
+      "position": [
+        480,
+        240
+      ],
+      "id": "a096b5c7-5ef4-405b-b1be-5b6cd8af8286",
+      "alwaysOutputData": true,
+      "credentials": {
+        "quickBooksOAuth2Api": {
+          "id": "SWB0FIVSlreELRR1",
+          "name": "QuickBooks Online account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [],
+          "string": [
+            {
+              "value1": "={{ $('Get row(s) in sheet').item.json[\"Customer Account Number\"] }}",
+              "operation": "isEmpty"
+            },
+            {
+              "value1": "={{ $('Get row(s) in sheet').item.json[\"Customer Name\"] }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "name": "If Customer Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        480,
+        528
+      ],
+      "id": "141f537e-0a7c-42c5-9195-61bf863f16f8"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "displayName": "={{ $('Get row(s) in sheet').item.json[\"Customer Name\"] }}",
+        "additionalFields": {
+          "CompanyName": "={{ $('Get row(s) in sheet').item.json[\"Company Name\"] }}",
+          "PrimaryEmailAddr": "={{ $('Get row(s) in sheet').item.json.Email }}"
+        }
+      },
+      "name": "QuickBooks Create Customer",
+      "type": "n8n-nodes-base.quickbooks",
+      "typeVersion": 1,
+      "position": [
+        656,
+        704
+      ],
+      "id": "8b31d347-a4fd-4cfe-964c-e51119606323",
+      "credentials": {
+        "quickBooksOAuth2Api": {
+          "id": "SWB0FIVSlreELRR1",
+          "name": "QuickBooks Online account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "invoice",
+        "operation": "create",
+        "CustomerRef": "70",
+        "Line": [
+          {
+            "Description": "={{ $('Get row(s) in sheet').item.json.Decription }}",
+            "Amount": "={{ $('Get row(s) in sheet').item.json.Quantity }}",
+            "itemId": "2",
+            "DetailType": "SalesItemLineDetail"
+          }
+        ],
+        "additionalFields": {
+          "CustomFields": {
+            "Field": [
+              {
+                "DefinitionId": "=Customer Account Number",
+                "StringValue": "={{ $('Get row(s) in sheet').item.json[\"Customer Account Number\"] }}"
+              },
+              {
+                "DefinitionId": "=PO Number",
+                "StringValue": "={{ $('Get row(s) in sheet').item.json[\"PO Number\"] }}"
+              }
+            ]
+          },
+          "DueDate": "={{ $('Get row(s) in sheet').item.json[\"Due Date\"] }}",
+          "TotalAmt": "={{ $('Get row(s) in sheet').item.json.Quantity }}",
+          "TxnDate": "={{ $('Get row(s) in sheet').item.json[\"Invoice Date\"] }}"
+        }
+      },
+      "name": "QuickBooks Create Invoice",
+      "type": "n8n-nodes-base.quickbooks",
+      "typeVersion": 1,
+      "position": [
+        864,
+        512
+      ],
+      "id": "78fbf695-ceb6-4938-b7ae-7b4abe6f70a3",
+      "credentials": {
+        "quickBooksOAuth2Api": {
+          "id": "SWB0FIVSlreELRR1",
+          "name": "QuickBooks Online account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -5056,
+        1280
+      ],
+      "id": "43a27b2e-c443-4de5-adf0-077b2b3c9938",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7tWZdjf44lqFwtRn",
+          "name": "Gemini key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.id ||$('If- File is Exist').item.json.id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer Account Number": "={{ $('Get Customer Info From PO Sheet').item.json['Customer Account Number'] }}",
+            "Invoice Date": "={{ $('Create Sheet Name + Invoice Date').all()[0].json['last date of current month'].toDateTime().format('MM-dd-yyyy') }}",
+            "Due Date": "={{ $('Create Sheet Name + Invoice Date').all()[0].json['last date of current month'].trim().toDateTime().plus($('Get Customer Info From PO Sheet').all()[0].json['Due Date Calculation'],'days').format('MM-dd-yyyy') }}",
+            "PO Number": "={{ $('Get Customer Info From PO Sheet').item.json['PO Number'] }}",
+            "Item Column Title": "Items",
+            "Quantity Column": "Hours",
+            "Item Name": "={{ $('Get Customer Info From PO Sheet').item.json.Item }}",
+            "Quantity": "={{ $('Loop Over Items').item.json['Total Hours']}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Customer Account Number",
+              "displayName": "Customer Account Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Invoice Date",
+              "displayName": "Invoice Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Due Date",
+              "displayName": "Due Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PO Number",
+              "displayName": "PO Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Item Column Title",
+              "displayName": "Item Column Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Quantity Column",
+              "displayName": "Quantity Column",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Item Name",
+              "displayName": "Item Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Unit Price",
+              "displayName": "Unit Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Decription",
+              "displayName": "Decription",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        96,
+        -128
+      ],
+      "id": "f33f53a7-6c87-45c7-a26f-9e6ff47a340e",
+      "name": " Sheets: Append Row1",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dafm31Y0W1apzu9B",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        -2752
+      ],
+      "id": "225bd824-09be-474b-b3b7-b24024c791be",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1C1AMnWgs02TFbn03Him2R2JUe-ouTmYLWl-hgjT9DIM",
+          "mode": "list",
+          "cachedResultName": "BertholdSchmidt_April_2025\n\n\n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C1AMnWgs02TFbn03Him2R2JUe-ouTmYLWl-hgjT9DIM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1390319744,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C1AMnWgs02TFbn03Him2R2JUe-ouTmYLWl-hgjT9DIM/edit#gid=1390319744"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        0
+      ],
+      "id": "70559d07-2f62-4416-aa2a-0ae9d7dbebb5",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dafm31Y0W1apzu9B",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "AI Agent": [
+      {
+        "json": {
+          "output": "{\n  \"Employee Name\": \"Lekhya Reddy Mudda\",\n  \"Manager Name\": \"Vish Aiyah\",\n  \"Client\": \"Wine Direct\",\n  \"month1\": {\n    \"month\": \"July\",\n    \"year\": 2025,\n    \"Week Starting Date\": \"07/16/2025\",\n    \"Week Ending Date\": \"07/31/2025\",\n    \"Total Hours\": 96.00\n  }\n}"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "Set: Spreadsheet  (ID & Name)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Spreadsheet  (ID & Name)": {
+      "main": [
+        [
+          {
+            "node": " Sheets: Append Row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Binary Attachments": {
+      "main": [
+        [
+          {
+            "node": "Loop: Process Each Attachment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop: Process Each Attachment": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Map Timesheet Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Each Month": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map Timesheet Fields": {
+      "main": [
+        [
+          {
+            "node": "Create Sheet Name + Invoice Date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for Duplicate Entry": {
+      "main": [
+        [
+          {
+            "node": "Skip January First Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip If Duplicate Found": {
+      "main": [
+        [
+          {
+            "node": "Loop: Process Each Attachment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": " Sheets: Append Row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Sheet Name + Invoice Date": {
+      "main": [
+        [
+          {
+            "node": "Get Customer Info From PO Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " If: First Time This Month?": {
+      "main": [
+        [
+          {
+            "node": "Map Timesheet Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets: Create Sheet": {
+      "main": [
+        [
+          {
+            "node": "Move Sheet to Invoice Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move Sheet to Invoice Folder": {
+      "main": [
+        [
+          {
+            "node": "Prepare Default Invoice Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Default Invoice Row": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If- File is Exist": {
+      "main": [
+        [
+          {
+            "node": "Check for Duplicate Entry",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets: Create Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": " If: First Time This Month?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search: Client Invoices Folder": {
+      "main": [
+        [
+          {
+            "node": "Search: Employee Name Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search: Employee Name Folder": {
+      "main": [
+        [
+          {
+            "node": "Check Employee Name Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Employee Name Folder": {
+      "main": [
+        [
+          {
+            "node": "Search: Inside folders in Employee Name Folder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Employee Name Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search: Inside folders in Employee Name Folder": {
+      "main": [
+        [
+          {
+            "node": "Search: folder name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search: folder name": {
+      "main": [
+        [
+          {
+            "node": "Search: Year Folder ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search: Year Folder ": {
+      "main": [
+        [
+          {
+            "node": "Check if Year Folder Exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Year Folder Exists": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Current Year Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Employee Name Folder": {
+      "main": [
+        [
+          {
+            "node": "Create  Folder Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Current Year Folder": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "If- File is Exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Customer Info From PO Sheet": {
+      "main": [
+        [
+          {
+            "node": "Search: Client Invoices Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create  Folder Name": {
+      "main": [
+        [
+          {
+            "node": "Create: Year Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create: Year Folder": {
+      "main": [
+        [
+          {
+            "node": "Check if Year Folder Exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Month array": {
+      "main": [
+        [
+          {
+            "node": "Split Each Month",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Split Binary Attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Extract Text ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text ": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip January First Time": {
+      "main": [
+        [
+          {
+            "node": "Delete Exiting Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip If Duplicate Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Exiting Row": {
+      "main": [
+        [
+          {
+            "node": " Sheets: Append Row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Prepare Month array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QuickBooks Find Customer": {
+      "main": [
+        [
+          {
+            "node": "If Customer Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Customer Exists?": {
+      "main": [
+        [
+          {
+            "node": "QuickBooks Create Invoice",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "QuickBooks Create Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QuickBooks Create Customer": {
+      "main": [
+        [
+          {
+            "node": "QuickBooks Create Invoice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " Sheets: Append Row1": {
+      "main": [
+        [
+          {
+            "node": "Loop: Process Each Attachment",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "QuickBooks Find Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QuickBooks Create Invoice": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "93d9ceaa-2ac6-4358-875c-75f611c9fdfd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e57cda8acf3c52b6fbbc632680c1ae8e47047b233d30f5c1122118c6dfbc0a14"
+  },
+  "id": "gmbty64SLA5NG7eI",
+  "tags": []
+}
