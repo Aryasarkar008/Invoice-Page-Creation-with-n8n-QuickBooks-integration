@@ -1,5 +1,7 @@
 # 📄 Automated Invoice Page Creation & QuickBooks Integration (n8n)
 
+<p align="center"><img src="https://github.com/Aryasarkar008/Invoice-Page-Creation-with-n8n-QuickBooks-integration/blob/main/full%20flow.png?raw=true" alt="project-image"></p>
+
 ## 🚀 Overview
 
 This project implements a **fully automated invoice generation pipeline** using **n8n**, integrating Gmail, AI-based timesheet parsing, Google Sheets, Google Drive, and QuickBooks Online.
